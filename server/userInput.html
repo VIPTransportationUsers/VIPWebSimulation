@@ -1,0 +1,257 @@
+<!--
+                                                   hsd                
+                                                  yooo                
+                                                 hoooo                
+                                                dooooo
+                                               dooooos                
+           __         __        ___            ooooooy                
+|  | |  | |__)  |\/| |__) |    |__  \_/      dooooooyh                
+|/\| \__/ |  \  |  | |    |___ |___ / \     doooooooyh                
+                                           hooooooosyh                
+                                  s+hN   Nyoooooooosyd                
+                                  s..:yN soooooooooooy                
+                                  h....:ooooooooooooooh N h           
+                                  N/:..../sooooooooooooysooh          
+                                  ho+/:...soooooooooooooyosd          
+                               Nhooyo++/:/soooooooooooooohy           
+                               yooooosssooooooooos+::/oooohN          
+                               ooooooooooooooooos:.-+:.+sosN          
+                            h+/:/ooooo+:-------+/..yMm-.oooy          
+                           +.....-oo:-.........+..-MMM+./sood         
+                          h....../:............+..-MMMo.:soosN        
+        dsN               /...../:.............+...NMM/.+ooooh        
+         .:h              -.....o..............-+..+my.-sooooodh N    
+ddN      -..+             /.....+...............:/-.-.-+soooooyysyd   
+ //hN    s...-y           d-....+................+/::::.:sooooohyyd   
+ h:.:yN  N/-...+N           /-..-/.............-/:.......soooooyhN    
+  s/-.:hN s/-...:d           do:-:/........--:+/-.......-yooooosN     
+  N+/-../hd+/-....sNN          Ndyyy/+++o+++++/.........oooooooo      
+   d+/-.../o+/:...-yoydNMMMMmhmNMMddNMNsy+//:-.........-soooooood     
+    y+/:..../o+:..oyoooshNNdooosd sooydoo+...............:oooooosy    
+     s++:....-+sooysoooooyyyoooohyyoohoos/...............osooooooooyN 
+     No++/-o++soooooooooooooooooossoohooy-...............:/oooooooos  
+       +++yoooysssooooooooooooooooooooooy-..............-::/yooooosN  
+       hsssoooyhssooooooooyssooooooooooo/-::-........../-.``./sooooyN 
+       dooooooohysoooooooohsooooooooos:````.+-.....----o.`````-soooo  
+       yoooooooooooooooooosysooooooos-..-::/o/:::::::::-::/++++osood  
+      dossssyssoossoooos+oooooooooooyyyy///:..............+yooooooooh 
+       dhhyyyy+yy+-.:ss-../oyys/yyyyyyys................../yysoooooss 
+         Nyyh:-+/::...+--...:s..-osyys+//:-..............-:/oyyyyyyyd 
+         N hho:```.+-:/--:/-.:+::-..+:::-.::::::::::::::::-/:.-oyyy   
+             -.-:/+so:```.-o-/```::.//``-/......---......-:o-.``:hN   
+             NNNNNMMmo-:+oyyo+```.-s+:```./+:---....--::/++ydysooos    
+                            sosyhNNh/+oshNdhhyssoooosyhd              
+                            
+    
+    AUTHORS:
+        Robe Zhang
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>VIP Transporation</title>
+        <link rel="icon" href="../static/logo.png"/>
+        <style>
+            #mapEle{
+                height:100%;   
+            }
+            html, body{
+                height:100%;
+                margin:0; 
+                padding:0;
+                background-image:url("../static/background.jpg");
+                background-position:center;
+                background-repeat:no-repeat;
+                background-size:cover;
+            }
+            #inputForm{
+                font-family:monospace;
+                color:#57058b;
+                font-weight:bold;
+                font-size:30pt;
+                text-align:center; 
+            }
+            #container{
+                display:table-cell;
+                vertical-align:middle;
+                height:100vh;
+                width:100vw;
+            }
+            input{
+                font-size:20pt;
+                margin-top:10px;
+                margin-bottom:30px;
+            }
+            ::-webkit-input-placeholder {
+               text-align:center;
+            }
+            #submit{
+                background-color:#57058b;
+                border-radius:10px;
+                color:#d7d3d0;
+                padding:5px 20px 5px 20px;
+                outline:none;
+                margin:10px;
+            }
+            #githubContainer{
+                opacity:.8;
+                position:fixed;
+                bottom:10px;
+                right:50px;
+            }
+            #github{
+                height:auto;
+                width:75px;
+            }
+            #vipLogo{
+                position:fixed;
+                bottom:20px;
+                left:20px;
+                height:auto;
+                width:250px;
+            }
+            @media(max-width:1050px){
+                #inputForm{
+                    font-size:60pt;
+                }
+                input{
+                    font-size:60pt;
+                    width:100%;
+                    border-radius:10px;
+                }
+                #submit{
+                    border-radius:30px;
+                    width:initial;
+                    padding:5px 100px 5px 100px;
+                    background-color:blue;
+                }
+                #githubContainer{
+                    bottom:50px;
+                    left:50%;
+                    margin-left:-100px;
+                }
+                #github{
+                    height:auto;
+                    width:200px;
+                }
+                #vipLogo{
+                    top:80px;
+                    width:800px;
+                    left:50%;
+                    margin-left:-400px;
+                }
+                #output{
+                    position:absolute;
+                }
+                .pac-item,.pac-matched,.pac-item-query{
+                    font-size:50pt;
+                }
+                .pac-container{
+                    height:620px;
+                }
+                .pac-item{
+                    line-height:initial;
+                    text-overflow: initial;
+                    white-space: initial;
+                }
+                .pac-icon{
+                    display:initial;
+                    vertical-align:initial;
+                }
+                .pac-matched,.pac-item-query{
+                    vertical-align:initial;
+                }
+            }
+        </style>
+        <script>
+            var bounds = ["Brooklyn","New York","Queens","Bronx","Staten Island"]; 
+            var geocoder;
+            
+            function initMap(){
+                geocoder = new google.maps.Geocoder();
+                new google.maps.places.Autocomplete(startEle);
+                new google.maps.places.Autocomplete(destinationEle);
+            }
+            function validateUserInput(){
+                clearOutput();
+                geocoder.geocode({'address':startEle.value,componentRestrictions:{country:'US'}}, function(results, status){
+                    if(status==google.maps.GeocoderStatus.OK&&startEle.value!=""){
+                        if(bounds.indexOf(results[0].address_components[3].long_name)<0&&bounds.indexOf(results[0].address_components[2].long_name)<0){
+                            outputEle.innerHTML = "Invalid Starting Location";
+                            console.log("Invalid Starting Location:" + results[0].address_components[3].long_name);
+                            return;
+                        }
+                        startLatLng = ""+results[0].geometry.location;
+                        geocoder.geocode({'address':destinationEle.value,componentRestrictions:{country:'US'}}, function(results, status){
+                            if(status==google.maps.GeocoderStatus.OK&&destinationEle.value!=""){
+                                if(bounds.indexOf(results[0].address_components[3].long_name)<0&&bounds.indexOf(results[0].address_components[2].long_name)<0){
+                                    outputEle.innerHTML = "Invalid Destination Location";
+                                    console.log("Invalid Destination Location:" + results[0].address_components[3].long_name);
+                                    return;
+                                }
+                                destLatLng = ""+results[0].geometry.location;
+                                startLatLng = startLatLng.substr(1,startLatLng.length-1);
+                                destLatLng = destLatLng.substr(1,destLatLng.length-2);
+                                loadUserRequest(startLatLng,destLatLng);
+                            }
+                            else{
+                                outputEle.innerHTML = "Invalid Destination Location";
+                                console.log("Invalid Destination Location");
+                                return;
+                            }        
+                        });
+                    }
+                    else{
+                        outputEle.innerHTML = "Invalid Starting Location";
+                        console.log("Invalid Starting Location");
+                        return;
+                    }
+                });
+                console.log("New User");
+            }                   
+            function loadUserRequest(startLatLng,destLatLng){
+                submitEle.style.display = "none";
+                var request = new XMLHttpRequest();
+				request.onreadystatechange=function(){
+                    if (this.readyState == 4 && this.status == 200){
+                       //outputEle.innerHTML = "Request Sucessfully Sent"; 
+                       outputEle.innerHTML = this.responseText;
+                       //reload once complete trip
+                       //keep user updated
+                    }
+                };
+				url = "sendUserRequest.php";
+				request.open("POST", url, true);
+                request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+				request.send("startLatLng="+startLatLng+"&destLatLng="+destLatLng);
+            }     
+            function clearOutput(){
+                outputEle.innerHTML = "&nbsp";
+            }
+        </script>
+    </head>
+    <body>
+        <div id="container">
+            <div id="inputForm">
+                Starting Location:</br>
+                <input type="text" id="start" onfocus="this.value='';clearOutput()" placeholder="Insert Starting Location"/> </br>
+                Destination:</br>
+                <input type="text" id="destination" onfocus="this.value='';clearOutput()" placeholder="Insert Destination"/> </br>
+                <input id="submit" type="submit" value = "Request" onclick="validateUserInput()"/>
+                <div id ="output"> &nbsp </div>
+            </div>
+        <div>    
+        <a id = "githubContainer" onclick="javascript:window.open('https://github.com/ThirdRepublic');">
+            <img id = "github" src = "../static/github.png"/>
+        </a>
+        <img id = "vipLogo" src = "../static/vip.png"/> 
+        <script>
+            startEle = document.getElementById("start");
+            destinationEle = document.getElementById("destination");
+            outputEle = document.getElementById("output");
+            submitEle = document.getElementById("submit");
+        </script>
+        <!-- Goople API KEY-->
+        <script src="../API.js"></script>
+    </body>
+</html>

@@ -1,0 +1,714 @@
+<!--
+    ////////////////////////////////////////
+    ****CODE IS STILL UNDER DEVELOPMENT!****
+    ////////////////////////////////////////
+                                                   hsd                
+                                                  yooo                
+                                                 hoooo                
+                                                dooooo
+                                               dooooos                
+           __         __        ___            ooooooy                
+|  | |  | |__)  |\/| |__) |    |__  \_/      dooooooyh                
+|/\| \__/ |  \  |  | |    |___ |___ / \     doooooooyh                
+                                           hooooooosyh                
+                                  s+hN   Nyoooooooosyd                
+                                  s..:yN soooooooooooy                
+                                  h....:ooooooooooooooh N h           
+                                  N/:..../sooooooooooooysooh          
+                                  ho+/:...soooooooooooooyosd          
+                               Nhooyo++/:/soooooooooooooohy           
+                               yooooosssooooooooos+::/oooohN          
+                               ooooooooooooooooos:.-+:.+sosN          
+                            h+/:/ooooo+:-------+/..yMm-.oooy          
+                           +.....-oo:-.........+..-MMM+./sood         
+                          h....../:............+..-MMMo.:soosN        
+        dsN               /...../:.............+...NMM/.+ooooh        
+         .:h              -.....o..............-+..+my.-sooooodh N    
+ddN      -..+             /.....+...............:/-.-.-+soooooyysyd   
+ //hN    s...-y           d-....+................+/::::.:sooooohyyd   
+ h:.:yN  N/-...+N           /-..-/.............-/:.......soooooyhN    
+  s/-.:hN s/-...:d           do:-:/........--:+/-.......-yooooosN     
+  N+/-../hd+/-....sNN          Ndyyy/+++o+++++/.........oooooooo      
+   d+/-.../o+/:...-yoydNMMMMmhmNMMddNMNsy+//:-.........-soooooood     
+    y+/:..../o+:..oyoooshNNdooosd sooydoo+...............:oooooosy    
+     s++:....-+sooysoooooyyyoooohyyoohoos/...............osooooooooyN 
+     No++/-o++soooooooooooooooooossoohooy-...............:/oooooooos  
+       +++yoooysssooooooooooooooooooooooy-..............-::/yooooosN  
+       hsssoooyhssooooooooyssooooooooooo/-::-........../-.``./sooooyN 
+       dooooooohysoooooooohsooooooooos:````.+-.....----o.`````-soooo  
+       yoooooooooooooooooosysooooooos-..-::/o/:::::::::-::/++++osood  
+      dossssyssoossoooos+oooooooooooyyyy///:..............+yooooooooh 
+       dhhyyyy+yy+-.:ss-../oyys/yyyyyyys................../yysoooooss 
+         Nyyh:-+/::...+--...:s..-osyys+//:-..............-:/oyyyyyyyd 
+         N hho:```.+-:/--:/-.:+::-..+:::-.::::::::::::::::-/:.-oyyy   
+             -.-:/+so:```.-o-/```::.//``-/......---......-:o-.``:hN   
+             NNNNNMMmo-:+oyyo+```.-s+:```./+:---....--::/++ydysooos    
+                            sosyhNNh/+oshNdhhyssoooosyhd              
+                            
+    CURRENTLY IMPLEMENTED
+        Google Maps
+        Single Vehicle
+        Animation 
+        Vehicle Pathing
+        Mutiple Vehicles
+        Busy Loop
+        
+    
+    TO BE IMPLEMENTED
+        Scheduler 
+    
+    AUTHORS:
+        Robe Zhang    
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        <title>VIP Transporation</title>
+        <link rel="icon" href="static/logo.png"/>
+        <style>
+            #mapEle{
+                height:100%;   
+            }
+            html, body{
+                height:100%;
+                margin:0; 
+                padding:0;
+            }
+            #header{
+                position:absolute;
+                top:5px;
+                left:5px;
+                z-index:2;
+                background-color:#fff;
+                padding:5px;
+                font-family:'Adelle W01 Bold', serif;
+                border-radius:5px;
+                color:#c27ceb;
+                font-weight:bold;
+                font-size:30pt;
+                display:none;
+            }
+            input{
+                vertical-align:middle;
+                font-size:20pt;
+            }
+            #submit{
+                background-color:#c27ceb;
+                border-radius:10px;
+                color:#ffffff;
+                padding:5px;
+                outline:none;
+                opacity:.9;
+            }
+            #githubContainer{
+                opacity:.8;
+                position:fixed;
+                bottom:10px;
+                right:50px;
+            }
+            #github{
+                height:auto;
+                width:75px;
+            }
+            #vipLogo{
+                position:fixed;
+                top:5px;
+                right:5px;
+                height:auto;
+                width:250px;
+            }
+        </style>
+        <script>
+        <!-- //********************************* -->
+        <!-- //Initialize a REST client in a single line:-->
+        <!-- var client = require('twilio')('AC618857770a032f7318534e4c6cac54f2', '6a1182e1a6aa60425720e6705e24ae12'); -->
+         
+        <!-- // Use this convenient shorthand to send an SMS:-->
+        <!-- function sendMess(){ -->
+        <!-- client.sendSms({ -->
+            <!-- to:'+16462518917', -->
+            <!-- from:'+13474640300', -->
+            <!-- body:'Does this work?' -->
+        <!-- }, function(error, message) { -->
+            <!-- if (!error) { -->
+                <!-- console.log('Success! The SID for this SMS message is:'); -->
+                <!-- console.log(message.sid); -->
+                <!-- console.log('Message sent on:'); -->
+                <!-- console.log(message.dateCreated); -->
+            <!-- } else { -->
+                <!-- console.log('Oops! There was an error.'); -->
+                <!-- console.log(message.sid); -->
+            <!-- } -->
+        <!-- }); -->
+        <!-- } -->
+        //*********************************
+            //Global for all vehicles
+            var map;
+            var directionsService;
+            var deployStationLoc = "NYU Tandon";
+            var geocoder;
+            var numVehicles = 1;
+            
+            var v = 0;//////////////////////////////////////////
+            
+            //Array of vehicles
+            var vehicles = new Array(numVehicles);
+            
+           function vehicle(){
+                //variables for each vehicle object
+                this.polyline = null;//full path, x
+                this.poly2 = null;//small steps within path, dx/dt
+                this.infowindow = null;
+                this.timerHandle = null;
+                this.vehicleMarker = null;
+                this.tempIndexUser;
+                this.hasUserState = false;
+                //stores User objects that holds start/destination
+                this.userPathArray = [];
+                
+                this.startLocation;
+                this.endLocation;
+               
+                this.fullDist;
+                this.lastVertex;
+            }
+            
+            //Vehicle Bounds
+            //restricted to these boroughs/counties 
+            var bounds = ["Brooklyn","New York","Queens","Bronx","Staten Island"]; 
+            
+            //Vehicle Route Colors
+            var routeColors = ["#0077c3","#643db1","#991111","#272d25","#7e7450"];
+            
+            //var busyLoop = ["New York Penn Station","Charging Bull","Central Park","East Village","Washington Square Park","American Museum of Natural History","Tandon"];
+            var busyLoopLatLng = [];
+            
+            //User start and destination locations
+            //if(isStart==true) start
+            //if(isStart==false) destination
+            function createMarker(latlng,label,isStart,img){
+                if(isStart){
+                    var image ={
+                        url:"static/"+img,                
+                        anchor:new google.maps.Point(15, 17.5),// The offset of the image to center on point
+                    };
+                }
+                else{
+                    var image ={
+                        url:"static/"+img,                              
+                        anchor:new google.maps.Point(15, 17.5),// The offset of the image to center on point
+                    };
+                }
+                var userMarker = new google.maps.Marker({
+                    map:map,
+                    position:latlng,
+                    icon:image,
+                    zIndex:3,
+                }); 
+                if(isStart)
+                    userMarker.setAnimation(google.maps.Animation.BOUNCE);
+                userMarker.myname = label;
+                google.maps.event.addListener(userMarker,'click',function(){
+                    infowindow.setContent('<b>'+label+'</b>'); 
+                    infowindow.open(map,userMarker);
+                });
+                return userMarker;
+            }
+            
+            function initMap(){
+                //sendMess();
+                //new google.maps.LatLng({lat:,lng:-}) new google.maps.LatLng()
+                busyLoopLatLng = [
+                    new google.maps.LatLng(40.714378699064866,-74.01180267333984),
+                    new google.maps.LatLng(40.717273679029205,-74.00588035583496),
+                    new google.maps.LatLng(40.718997596057285,-74.0093994140625),
+                    new google.maps.LatLng(40.709108861861516,-74.0134334564209),
+                    new google.maps.LatLng(40.70699430376329,-74.00716781616211),
+                    new google.maps.LatLng(40.71782663841088,-74.00253295898438),
+                    new google.maps.LatLng(40.72862468910986,-74.00699615478516),
+                    new google.maps.LatLng(40.72159965041679,-73.99566650390625),
+                    new google.maps.LatLng(40.70029233758598,-73.98120403289795),
+                    new google.maps.LatLng(40.72439674540761,-73.98746967315674),
+                    new google.maps.LatLng(40.72143702499928,-74.0055799484253),
+                    new google.maps.LatLng(40.72673840895164,-73.99935722351074),
+                    new google.maps.LatLng(40.67692778613304,-74.00733947753906),
+                    new google.maps.LatLng(40.682753419971746,-74.00021553039551),
+                    new google.maps.LatLng(40.69193020130768,-73.96738529205322),
+                    new google.maps.LatLng(40.70897873714814,-73.9405632019043),
+                    new google.maps.LatLng(40.68210253642768,-74.00862693786621),
+                    new google.maps.LatLng(40.67709052024723,-73.99429321289062),
+                    new google.maps.LatLng(40.7353238036913,-73.9945936203003),
+                    new google.maps.LatLng(40.72868973229961,-73.98824214935303),
+                    new google.maps.LatLng(40.72735633420242,-73.9949369430542),
+                    new google.maps.LatLng(40.72761651153886,-74.00815486907959),
+                    new google.maps.LatLng(40.72777912185759,-73.99708271026611),
+                    new google.maps.LatLng(40.73997376331186,-74.00274753570557),
+                    new google.maps.LatLng(40.73737242735457,-74.00240421295166),
+                    new google.maps.LatLng(40.73792521975707,-74.00862693786621),
+                    new google.maps.LatLng(40.71714357027189,-73.97682666778564),
+                    new google.maps.LatLng(40.72449431636692,-73.98579597473145),
+                    new google.maps.LatLng(40.70855583007363,-73.9579439163208),
+                    new google.maps.LatLng(40.72755146730012,-73.97652626037598),
+                    new google.maps.LatLng(40.7284295591591,-73.98240566253662),
+                    new google.maps.LatLng(40.68568231726459,-73.99296283721924),
+                    new google.maps.LatLng(40.68444568744034,-73.98171901702881),
+                    new google.maps.LatLng(40.693524619555234,-73.99905681610107),
+                    new google.maps.LatLng(40.68522671947258,-73.99420738220215),
+                    new google.maps.LatLng(40.67946639307681,-73.9859676361084),
+                    new google.maps.LatLng(40.73366534785424,-73.98262023925781),
+                    new google.maps.LatLng(40.73701473570521,-73.99339199066162),
+                    new google.maps.LatLng(40.76279612336697,-73.99322032928467),
+                    new google.maps.LatLng(40.76000064275873,-73.98000240325928),
+                    new google.maps.LatLng(40.75557964275589,-73.99497985839844),
+                    new google.maps.LatLng(40.75463689148853,-73.97283554077148),
+                    new google.maps.LatLng(40.76578650734446,-73.98704051971436),
+                    new google.maps.LatLng(40.762861133145016,-73.96755695343018),
+                    new google.maps.LatLng(40.7614309033397,-73.97111892700195),
+                    new google.maps.LatLng(40.74722445029306,-73.9513349533081),
+                    new google.maps.LatLng(40.720916620993194,-73.95107746124268)
+                ];
+                infowindow = new google.maps.InfoWindow({});
+                directionsService = new google.maps.DirectionsService();
+                map = new google.maps.Map(document.getElementById('mapEle'),{
+                    zoom:14,
+                    streetViewControl:false,
+                    mapTypeControl:false,  
+                    maxZoom:19,
+                    minZoom:2,
+                });
+                geocoder = new google.maps.Geocoder();
+                geocoder.geocode({'address':'New York'}, function(results, status){
+                    map.setCenter(results[0].geometry.location);
+                });
+                directionsDisplay = new google.maps.DirectionsRenderer();
+                directionsDisplay.setMap(map);
+                //creates a marker on the map with given latlng, label and optional text
+                //marker denote the vehicle            
+                function createVehicleMarker(latlng,label){
+                    var image ={
+                        url:"static/NYU.png",                
+                        anchor:new google.maps.Point(15, 17.5),// The offset of the image to center on point
+                    };
+                    var vehicleMarker = new google.maps.Marker({
+                        map:map,
+                        position:latlng,
+                        icon:image,
+                        zIndex:10,
+                    });
+                    vehicleMarker.myname = label;
+                    google.maps.event.addListener(vehicleMarker,'click',function(){
+                        infowindow.setContent('<b>'+label+'</b>'); 
+                        infowindow.open(map,vehicleMarker);
+                    });
+                    return vehicleMarker;
+                }
+                geocoder.geocode({'address':deployStationLoc},function(results, status){
+                    deployStationLocLatLng = results[0].geometry.location;
+                    deployStationMarker = new google.maps.Marker({
+                        map:map,
+                        icon:"static/googleMarkerBus.png",
+                        position:deployStationLocLatLng,
+                        animation:google.maps.Animation.DROP,
+                        opacity:0.6,
+                    });
+                    google.maps.event.addListener(deployStationMarker,'click',function(){
+                        infowindow.setContent('<b>Deploy Station</b>'); 
+                        infowindow.open(map,deployStationMarker);
+                    });
+                    for(var i=0;i<vehicles.length;i++){
+                        vehicles[i] = new vehicle();
+                        vehicles[i].vehicleMarker = createVehicleMarker(deployStationLocLatLng,"Vehicle "+i);
+                        vehicles[i].polyline = new google.maps.Polyline({
+                            path:[],
+                        });
+                        vehicles[i].poly2 = new google.maps.Polyline({
+                            path:[],
+                        });
+                        
+                        <!-- vehicles[i].vehicleMarker.hasUserState = true; -->
+                        <!-- appendUserInput(vehicles[i].vehicleMarker.position,new google.maps.LatLng(40.69430554518469,-73.98714780807495)); -->
+                        
+                    }
+                    loadUserRequest();
+                });
+                new google.maps.places.Autocomplete(startEle);
+                new google.maps.places.Autocomplete(destinationEle);
+            }
+            var steps = [];
+            
+            function calcRoute(vehicleIndex){
+                console.log("Current position:" + vehicles[vehicleIndex].vehicleMarker.position);
+                if(vehicles[vehicleIndex].timerHandle){
+                    clearTimeout(vehicles[vehicleIndex].timerHandle);
+                }  
+                vehicles[vehicleIndex].polyline.setMap(null);
+                vehicles[vehicleIndex].poly2.setMap(null);
+                vehicles[vehicleIndex].polyline = new google.maps.Polyline({
+                    path:[],
+                    strokeColor:routeColors[vehicleIndex],
+                    strokeOpacity:0.5,
+                    strokeWeight:6,
+                });
+                vehicles[vehicleIndex].poly2 = new google.maps.Polyline({
+                    path:[],
+                });
+                if(vehicles[vehicleIndex].userPathArray.length==0){
+                    console.log("Finished");
+                    vehicles[vehicleIndex].hasUserState = false;
+                    return makeBusyLoop(vehicleIndex);
+                }
+                //busy loop round robin
+                if(!vehicles[vehicleIndex].hasUserState){
+                    var tempDest;
+                    console.log("Busy, Number of Users: " + vehicles[vehicleIndex].userPathArray.length);
+                    for(var i=0;i<vehicles[vehicleIndex].userPathArray.length;i++){
+                        console.log("User " + i + " is getting picked up: " + !vehicles[vehicleIndex].userPathArray[i].reachStart);
+                        if(!vehicles[vehicleIndex].userPathArray[i].reachStart){
+                            tempDest = vehicles[vehicleIndex].userPathArray[i].start;
+                            tempIndexUser = i;
+                            break;
+                        }
+                        console.log("User " + i + " is getting dropped off: " + !vehicles[vehicleIndex].userPathArray[i].reachDestination);
+                        if(!vehicles[vehicleIndex].userPathArray[i].reachDestination){
+                            tempDest = vehicles[vehicleIndex].userPathArray[i].destination;
+                            tempIndexUser = i;
+                            break;
+                        }
+                    }
+                    console.log("Start: " + vehicles[vehicleIndex].vehicleMarker.position + " Dest: " + tempDest);
+                    var request ={
+                        origin:vehicles[vehicleIndex].vehicleMarker.position,
+                        destination:tempDest,
+                        travelMode:google.maps.DirectionsTravelMode.DRIVING,
+                    };        
+                }
+                else{
+                    //Next Stop for vehicle
+                    var minDist = Number.MAX_SAFE_INTEGER;//distance of min
+                    var minIndex = 0;//index of min
+                    var tempDest;                
+                    var isStartMin = true;//start or destination
+                    
+                    console.log("Next, Number of Users:" + vehicles[vehicleIndex].userPathArray.length);
+                    //******
+                    console.log(vehicles[vehicleIndex].userPathArray[0].start.lat());
+                    for(var i=0;i<vehicles[vehicleIndex].userPathArray.length;i++){
+                        if(!vehicles[vehicleIndex].userPathArray[i].reachStart){
+                            if(distLinear(vehicles[vehicleIndex].vehicleMarker.position,vehicles[vehicleIndex].userPathArray[i].start)<minDist){
+                                minDist = distLinear(vehicles[vehicleIndex].vehicleMarker.position,vehicles[vehicleIndex].userPathArray[i].start);
+                                minIndex = i;
+                                isStartMin = true;
+                            }
+                        }
+                        else{
+                            console.log("How?");
+                            if(distLinear(vehicles[vehicleIndex].vehicleMarker.position,vehicles[vehicleIndex].userPathArray[i].destination)<minDist){
+                                minDist = distLinear(vehicles[vehicleIndex].vehicleMarker.position,vehicles[vehicleIndex].userPathArray[i].destination);
+                                minIndex = i;
+                                isStartMin = false;
+                            }
+                        }
+                    }
+                    if(isStartMin){
+                        console.log("User " + minIndex + " is getting picked up:" + !vehicles[vehicleIndex].userPathArray[minIndex].reachStart);
+                        tempDest = vehicles[vehicleIndex].userPathArray[minIndex].start;
+                        vehicles[vehicleIndex].tempIndexUser = minIndex;
+                    }
+                        
+                    else{
+                        console.log("User " + minIndex + " is getting dropped off:" + !vehicles[vehicleIndex].userPathArray[minIndex].reachDestination);
+                        tempDest = vehicles[vehicleIndex].userPathArray[minIndex].destination;
+                        vehicles[vehicleIndex].tempIndexUser = minIndex;
+                    }
+                    console.log("Start:" + vehicles[vehicleIndex].vehicleMarker.position + " Dest:" + tempDest);
+                    var request ={
+                        origin:vehicles[vehicleIndex].vehicleMarker.position,
+                        destination:tempDest,
+                        travelMode:google.maps.DirectionsTravelMode.DRIVING,
+                    }; 
+                }  
+                // Route the directions and pass the response to a
+                // function to create markers for each step.
+                directionsService.route(request, function(response, status){
+                    if(status == google.maps.DirectionsStatus.OK){
+                        vehicles[vehicleIndex].startLocation = new Object();
+                        vehicles[vehicleIndex].endLocation = new Object();
+                        // For each route, display summary information.
+                        var path = response.routes[0].overview_path;
+                        var legs = response.routes[0].legs;
+                        for(var i=0;i<legs.length;i++){
+                            if(i==0){ 
+                                vehicles[vehicleIndex].startLocation.latlng = legs[i].start_location;
+                                vehicles[vehicleIndex].startLocation.address = legs[i].start_address;   
+                            }
+                            vehicles[vehicleIndex].endLocation.latlng = legs[i].end_location;
+                            vehicles[vehicleIndex].endLocation.address = legs[i].end_address;
+                            var steps = legs[i].steps;
+                            for(var j=0;j<steps.length;j++){
+                                var nextSegment = steps[j].path;
+                                for(k=0;k<nextSegment.length;k++){
+                                    vehicles[vehicleIndex].polyline.getPath().push(nextSegment[k]);
+                                }
+                            }
+                        }
+                        vehicles[vehicleIndex].polyline.setMap(map);
+                        console.log("Animate");
+                        startAnimation(vehicleIndex);
+                    }                                                    
+                });
+            }  
+            function appendUserInput(startLatLng,destLatLng){
+                console.log(startLatLng.lat());
+                console.log(startLatLng.lng());
+                console.log(destLatLng.lat());
+                console.log(destLatLng.lng());
+                user ={
+                    start:startLatLng,
+                    reachStart:false,
+                    startMarker:createMarker(startLatLng,startEle.value,true,"startMarker.png"),
+                    destination:destLatLng,
+                    reachDestination:false,
+                    destinationMarker:createMarker(destLatLng,destinationEle.value,false,"destMarker.png"),
+                }
+                console.log("added");
+                console.log(startLatLng);
+                console.log(destLatLng);
+                console.log(user.start.lat());
+                console.log(user.start.lng());
+                console.log(user.destination.lat());
+                console.log(user.destination.lng());
+                //Needs to schedule *************************
+                if(v>=numVehicles)
+                    v=0;
+                if(vehicles[v].hasUserState == false)
+                    clearUserPath(v);
+                //Scheduler needed************** 
+                vehicles[v].userPathArray.push(user);//////////////////////////////////////////
+                calcRoute(v);
+                v++;
+            }
+            function validateUserInput(){
+                geocoder.geocode({'address':startEle.value,componentRestrictions:{country:'US'}}, function(results, status){
+                    if(status==google.maps.GeocoderStatus.OK&&startEle.value!=""){
+                        if(bounds.indexOf(results[0].address_components[3].long_name)<0&&bounds.indexOf(results[0].address_components[2].long_name)<0){
+                            //alert
+                            console.log("Invalid Starting Location: " + results[0].address_components[3].long_name);
+                            return;
+                        }
+                        startLatLng = results[0].geometry.location;
+                        geocoder.geocode({'address':destinationEle.value,componentRestrictions:{country:'US'}}, function(results, status){
+                            if(status==google.maps.GeocoderStatus.OK&&destinationEle.value!=""){
+                                if(bounds.indexOf(results[0].address_components[3].long_name)<0&&bounds.indexOf(results[0].address_components[2].long_name)<0){
+                                    //alert
+                                    console.log("Invalid Destination Location: " + results[0].address_components[3].long_name);
+                                    return;
+                                }
+                                destLatLng = results[0].geometry.location;
+                                appendUserInput(startLatLng,destLatLng);
+                            }
+                            else{
+                                //alert
+                                console.log("Invalid Destination Location");
+                                return;
+                            }        
+                        });
+                    }
+                    else{
+                        //alert
+                        console.log("Invalid Starting Location");
+                        return;
+                    }
+                });
+                console.log("New User");
+            }
+            
+            function distLinear(latlng1,latlng2){
+                <!-- if(user1.reachStart) -->
+                    <!-- latlng1 = user1.destination; -->
+                <!-- else -->
+                    <!-- latlng1 = user1.start; -->
+                <!-- if(user2.reachStart) -->
+                    <!-- latlng2 = user2.destination; -->
+                <!-- else -->
+                    <!-- latlng2 = user2.start; -->
+                console.log("distLinear");
+                console.log(latlng1.lat());
+                console.log(latlng2.lat());
+                console.log(latlng1.lng());
+                console.log(latlng2.lng());
+                return Math.sqrt(Math.pow(latlng1.lat()-latlng2.lat(),2)+Math.pow(latlng1.lng()-latlng2.lng(),2));
+            }
+//AJAX Request****************************************************************************                    
+            function loadUserRequest(){
+                var request = new XMLHttpRequest();
+				request.onreadystatechange=function(){
+                    if (this.readyState == 4 && this.status == 200){
+                        if(this.responseText.indexOf("&&")<0){
+                            console.log("Nothing");
+                            return setTimeout(function(){loadUserRequest()},4000);
+                        }
+                        console.log("Start");
+                        console.log(this.responseText);
+                        var userCoords = this.responseText.split("&&");
+                        start = userCoords[0].split(",");
+                        dest = userCoords[1].split(",");
+                        
+                        var startLatLng = new google.maps.LatLng(parseFloat(start[0]),parseFloat(start[1]));
+                        var destLatLng = new google.maps.LatLng(parseFloat(dest[0]),parseFloat(dest[1]));
+                        appendUserInput(startLatLng,destLatLng);
+                        console.log("Past");
+                        setTimeout(function(){loadUserRequest()},4000);
+                    }
+                };
+				url = "server/getUserRequest.php";
+				request.open("POST", url, true);
+				request.send();
+            }
+//AJAX Request****************************************************************************                   
+//BUSY LOOP****************************************************************************            
+            //Temp busy loop 
+            function makeBusyLoop(vehicleIndex){
+                var tempOrder = [];
+                while(tempOrder.length<busyLoopLatLng.length){
+                    var idx = Math.floor(Math.random() * busyLoopLatLng.length);
+                    if(tempOrder.indexOf(busyLoopLatLng[idx])<0)
+                        tempOrder.push(busyLoopLatLng[idx]);
+                }
+                tempOrder.unshift(vehicles[vehicleIndex].endLocation.latlng);
+                console.log(vehicles[vehicleIndex].endLocation.latlng);
+                
+                for(var i = 0;i<tempOrder.length-1;i++){
+                    user ={
+                        start:tempOrder[i],
+                        reachStart:false,
+                        startMarker:createMarker(tempOrder[i],"Busy Loop",false,"busyLoop.png"),
+                        destination:tempOrder[i+1],
+                        reachDestination:false,
+                        destinationMarker:createMarker(tempOrder[i+1],"Busy Loop",true,"busyLoop.png"),
+                    }
+                    
+                    console.log("start busy");
+                    vehicles[vehicleIndex].userPathArray.push(user);
+                    if(i!=0){
+                        vehicles[vehicleIndex].userPathArray[i].startMarker.setMap(null);
+                        vehicles[vehicleIndex].userPathArray[i].destinationMarker.setMap(null);
+                    }
+                }
+                calcRoute(vehicleIndex);
+            }
+            //clear the busy loop
+            function clearUserPath(vehicleIndex){
+                for(var i = 0;i<vehicles[vehicleIndex].userPathArray.length;i++){
+                    vehicles[vehicleIndex].userPathArray[i].startMarker.setMap(null);
+                    vehicles[vehicleIndex].userPathArray[i].destinationMarker.setMap(null);
+                }
+                vehicles[vehicleIndex].userPathArray.splice(0,vehicles[vehicleIndex].userPathArray.length);
+                vehicles[vehicleIndex].hasUserState = true;
+                console.log("cleared");
+            }
+//BUSY LOOP****************************************************************************
+
+            
+   <!-- ##       ###    ##    ## #### ##     ##    ###    ######## ####  #######  ##    ##    ##     -->
+  <!-- ##       ## ##   ###   ##  ##  ###   ###   ## ##      ##     ##  ##     ## ###   ##     ##    -->
+ <!-- ##       ##   ##  ####  ##  ##  #### ####  ##   ##     ##     ##  ##     ## ####  ##      ##   -->
+<!-- ##       ##     ## ## ## ##  ##  ## ### ## ##     ##    ##     ##  ##     ## ## ## ##       ##  -->
+ <!-- ##      ######### ##  ####  ##  ##     ## #########    ##     ##  ##     ## ##  ####      ##   -->
+  <!-- ##     ##     ## ##   ###  ##  ##     ## ##     ##    ##     ##  ##     ## ##   ###     ##    -->
+   <!-- ##    ##     ## ##    ## #### ##     ## ##     ##    ##    ####  #######  ##    ##    ##    -->
+            var step = 50; //Meters moved
+            var tick = 100; //Interval in milliseconds
+            
+            function updatePoly(d,vehicleIndex){
+                // Spawn a new polyline every 20 vertices, because updating a 100-vertex poly is too slow
+                if(vehicles[vehicleIndex].poly2.getPath().getLength()>20){
+                    vehicles[vehicleIndex].poly2 = new google.maps.Polyline([vehicles[vehicleIndex].polyline.getPath().getAt(vehicles[vehicleIndex].lastVertex)]);
+                }
+                if(vehicles[vehicleIndex].polyline.GetIndexAtDistance(d)<vehicles[vehicleIndex].lastVertex+1){
+                    if(vehicles[vehicleIndex].poly2.getPath().getLength()>1){
+                        vehicles[vehicleIndex].poly2.getPath().removeAt(vehicles[vehicleIndex].poly2.getPath().getLength()-1)
+                    }
+                    vehicles[vehicleIndex].poly2.getPath().insertAt(vehicles[vehicleIndex].poly2.getPath().getLength(),vehicles[vehicleIndex].polyline.GetPointAtDistance(d));
+                } 
+                else{
+                    vehicles[vehicleIndex].poly2.getPath().insertAt(vehicles[vehicleIndex].poly2.getPath().getLength(),vehicles[vehicleIndex].endLocation.latlng);
+                }
+            }
+            function animate(d,vehicleIndex){
+                console.log("moving");
+                if(d>vehicles[vehicleIndex].fullDist){
+                    console.log(vehicleIndex);
+                    vehicles[vehicleIndex].vehicleMarker.setPosition(vehicles[vehicleIndex].endLocation.latlng);
+                    vehicles[vehicleIndex].polyline.setMap(null);
+                    directionsDisplay.setMap(null);
+                        console.log("Reached relative dest, Temp user :" + vehicles[vehicleIndex].tempIndexUser);
+                        if(!vehicles[vehicleIndex].userPathArray[vehicles[vehicleIndex].tempIndexUser].reachStart){
+                            vehicles[vehicleIndex].userPathArray[vehicles[vehicleIndex].tempIndexUser].reachStart = true;
+                            vehicles[vehicleIndex].userPathArray[vehicles[vehicleIndex].tempIndexUser].startMarker.setMap(null);
+                        }
+                              
+                        else
+                            if(!vehicles[vehicleIndex].userPathArray[vehicles[vehicleIndex].tempIndexUser].reachDestination){
+                                vehicles[vehicleIndex].userPathArray[vehicles[vehicleIndex].tempIndexUser].reachDestination = true;
+                                vehicles[vehicleIndex].userPathArray[vehicles[vehicleIndex].tempIndexUser].destinationMarker.setMap(null);
+                            }
+                        if(vehicles[vehicleIndex].userPathArray[vehicles[vehicleIndex].tempIndexUser].reachStart&&vehicles[vehicleIndex].userPathArray[vehicles[vehicleIndex].tempIndexUser].reachDestination){
+                            vehicles[vehicleIndex].userPathArray.splice(vehicles[vehicleIndex].tempIndexUser,1);
+                            console.log("clear1");
+                            console.log(vehicles[vehicleIndex].userPathArray.length);
+                            if(!vehicles[vehicleIndex].hasUserState&&vehicles[vehicleIndex].userPathArray.length!=0){
+                                //vehicles[vehicleIndex].userPathArray[0].startMarker.setMap(map);
+                                vehicles[vehicleIndex].userPathArray[0].destinationMarker.setMap(map);
+                            }
+                        }
+                    return calcRoute(vehicleIndex);  
+                }
+                var p = vehicles[vehicleIndex].polyline.GetPointAtDistance(d);
+                vehicles[vehicleIndex].vehicleMarker.setPosition(p);
+                updatePoly(d,vehicleIndex);
+                vehicles[vehicleIndex].timerHandle = setTimeout("animate("+(d+step)+","+vehicleIndex+")", tick);
+            }
+            function startAnimation(vehicleIndex){
+ 
+                vehicles[vehicleIndex].lastVertex = 0;
+                vehicles[vehicleIndex].fullDist = vehicles[vehicleIndex].polyline.Distance();
+                vehicles[vehicleIndex].poly2 = new google.maps.Polyline({
+                    path:[vehicles[vehicleIndex].polyline.getPath().getAt(0)], 
+                });
+                setTimeout("animate(50,"+vehicleIndex+")",500);// Allow time for the initial map display
+            }
+            
+   <!-- ##       ##       ###    ##    ## #### ##     ##    ###    ######## ####  #######  ##    ##    ##     -->
+  <!-- ##       ##       ## ##   ###   ##  ##  ###   ###   ## ##      ##     ##  ##     ## ###   ##     ##    -->
+ <!-- ##       ##       ##   ##  ####  ##  ##  #### ####  ##   ##     ##     ##  ##     ## ####  ##      ##   -->
+<!-- ##       ##       ##     ## ## ## ##  ##  ## ### ## ##     ##    ##     ##  ##     ## ## ## ##       ##  -->
+ <!-- ##     ##        ######### ##  ####  ##  ##     ## #########    ##     ##  ##     ## ##  ####      ##   -->
+  <!-- ##   ##         ##     ## ##   ###  ##  ##     ## ##     ##    ##     ##  ##     ## ##   ###     ##    -->
+   <!-- ## ##          ##     ## ##    ## #### ##     ## ##     ##    ##    ####  #######  ##    ##    ##     -->
+        </script>
+    </head>
+    <body>
+        <div id="header">
+            Start:
+            <input type="text" id="start" value="NYU Tandon" onfocus="this.value=''" placeholder="Insert Starting Location"/>
+            Destination:
+            <input type="text" id="destination" value="LIU Brooklyn" onfocus="this.value=''" placeholder="Insert Destination"/>
+            <input id="submit" type="submit" value = "Request" onclick="validateUserInput();"/>
+        </div>
+        <div id="mapEle"></div>
+        <a id = "githubContainer" onclick="javascript:window.open('https://github.com/ThirdRepublic');">
+            <img id = "github" src = "static/github.png"/>
+        </a>
+        <img id = "vipLogo" src = "static/vip.png"/>
+        <script>
+            startEle = document.getElementById("start");
+            destinationEle = document.getElementById("destination");
+        </script>
+        <!-- Goople API KEY-->
+        <!-- distance library  -->
+        <script src = "API.js"></script>
+    </body>
+            
+</html>
