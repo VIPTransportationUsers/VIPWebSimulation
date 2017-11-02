@@ -1,6 +1,6 @@
+var googleMapsKey = "";
 var imported = document.createElement('script');
-imported.src = 'https://maps.googleapis.com/maps/api/js?key=&&libraries=places&callback=initMap';
-
+imported.src = 'https://maps.googleapis.com/maps/api/js?key='+googleMapsKey+'&&libraries=places&callback=initMap';
 
 var loc = window.location.pathname;
 var dir = loc.substring(0, loc.lastIndexOf('/'));

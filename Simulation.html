@@ -357,6 +357,7 @@ ddN      -..+             /.....+...............:/-.-.-+soooooyysyd
                 if(vehicles[vehicleIndex].userPathArray.length==0){
                     console.log("Finished");
                     vehicles[vehicleIndex].hasUserState = false;
+                    return//busy loop stopped
                     return makeBusyLoop(vehicleIndex);
                 }
                 //busy loop round robin
