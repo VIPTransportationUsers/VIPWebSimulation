@@ -56,7 +56,7 @@ While updating the files on localhost, use [Hard Reload](https://stackoverflow.c
     * Select Choose File and select 'userrequests.sql' located in xampp/htdocs/VIPWebSimulation/server/
     * Click go
 5. Obtain a [Google Maps API Key](https://developers.google.com/maps/documentation/javascript/get-api-key) <br />
-***Keep your key private to yourself***
+***Keep your Google Maps API key private***
 6. Set up Google API Key
     * Place your Google Maps Key between the empty double quotes
     ```shell
