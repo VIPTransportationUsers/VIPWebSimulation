@@ -51,73 +51,132 @@ ddN      -..+             /.....+...............:/-.-.-+soooooyysyd
     <head>
         <title>VIP Transporation</title>
         <link rel="icon" href="../static/logo.png"/>
+
         <style>
-            #mapEle{
-                height:100%;   
-            }
-            html, body{
-                height:100%;
-                margin:0; 
-                padding:0;
-                background-image:url("../static/background.jpg");
-                background-position:center;
-                background-repeat:no-repeat;
-                background-size:cover;
-            }
-            #inputForm{
-                font-family:monospace;
-                color:#57058b;
-                font-weight:bold;
-                font-size:30pt;
-                text-align:center; 
-            }
-            #container{
-                display:table-cell;
-                vertical-align:middle;
-                height:100vh;
-                width:100vw;
-            }
-            input{
-                font-size:20pt;
-                margin-top:10px;
-                margin-bottom:30px;
-            }
-            ::-webkit-input-placeholder {
-               text-align:center;
-            }
-            #submit{
-                background-color:#57058b;
-                border-radius:10px;
-                color:#d7d3d0;
-                padding:5px 20px 5px 20px;
-                outline:none;
-                margin:10px;
-            }
-            #githubContainer{
-                opacity:.8;
-                position:fixed;
-                bottom:10px;
-                right:50px;
-            }
-            #github{
-                height:auto;
-                width:75px;
-            }
-            #vipLogo{
-                position:fixed;
-                bottom:20px;
-                left:20px;
-                height:auto;
-                width:250px;
-            }
-            @media(max-width:1050px){
+            
                 #inputForm{
-                    font-size:60pt;
+                    font-size:40pt;
                 }
                 input{
-                    font-size:60pt;
-                    width:100%;
+                    font-size:40pt;
+                    width:80%;
                     border-radius:10px;
+                    text-align:center;
+                }
+                #submit{
+                    border-radius:30px;
+                    width:initial;
+                    padding:5px 100px 5px 100px;
+                    background-color:blue;
+                }
+                #githubContainer{
+                    display:none;
+                }
+                #github{
+                    display:none;
+                }
+                #vipLogo{
+                    
+                }
+                #output{
+                    
+                }
+                .pac-item,.pac-matched,.pac-item-query{
+                    font-size:25pt;
+                    text-align:center;
+                }
+                .pac-container{
+                    height:auto;
+                }
+                .pac-item{
+                    line-height:initial;
+                    text-overflow:initial;
+                    white-space:initial;
+                }
+                .pac-icon{
+                    display:initial;
+                    vertical-align:initial;
+                }
+                .pac-matched,.pac-item-query{
+                    vertical-align:initial;
+                }
+            
+            @media(min-height:500px){
+                #mapEle{
+                    height:100%;   
+                }
+                html, body{
+                    height:100%;
+                    margin:0; 
+                    padding:0;
+                    background-image:url("../static/background.jpg");
+                    background-position:center;
+                    background-repeat:no-repeat;
+                    background-size:cover;
+                }
+                #inputForm{
+                    font-family:monospace;
+                    color:#57058b;
+                    font-weight:bold;
+                    font-size:30pt;
+                    text-align:center; 
+                }
+                #container{
+                    display:table-cell;
+                    vertical-align:middle;
+                    height:100vh;
+                    width:100vw;
+                }
+                input{
+                    width:40%;
+                    font-size:20pt;
+                    margin-top:10px;
+                    margin-bottom:30px;
+                }
+                ::-webkit-input-placeholder {
+                   text-align:center;
+                }
+                #submit{
+                    background-color:#57058b;
+                    border-radius:10px;
+                    color:#d7d3d0;
+                    padding:5px 20px 5px 20px;
+                    outline:none;
+                    margin:10px;
+                }
+                #githubContainer{
+                    opacity:.8;
+                    position:fixed;
+                    bottom:10px;
+                    right:50px;
+                    display:initial;
+                }
+                #github{
+                    height:auto;
+                    width:75px;
+                    display:initial;
+                }
+                #vipLogo{
+                    position:fixed;
+                    bottom:20px;
+                    left:20px;
+                    height:auto;
+                    width:250px;
+                }
+                .pac-item,.pac-matched,.pac-item-query{
+                    font-size:20pt;
+                    text-align:center;
+                }
+            }    
+            @media(max-width:1050px){
+                #inputForm{
+                    font-size:40pt;
+                }
+                input{
+                    font-size:40pt;
+                    width:80%;
+                    border-radius:10px;
+                    text-align:center;
                 }
                 #submit{
                     border-radius:30px;
@@ -141,18 +200,19 @@ ddN      -..+             /.....+...............:/-.-.-+soooooyysyd
                     margin-left:-400px;
                 }
                 #output{
-                    position:absolute;
+                    
                 }
                 .pac-item,.pac-matched,.pac-item-query{
-                    font-size:50pt;
+                    font-size:25pt;
+                    text-align:center;
                 }
                 .pac-container{
-                    height:620px;
+                    height:auto;
                 }
                 .pac-item{
                     line-height:initial;
-                    text-overflow: initial;
-                    white-space: initial;
+                    text-overflow:initial;
+                    white-space:initial;
                 }
                 .pac-icon{
                     display:initial;
@@ -169,13 +229,30 @@ ddN      -..+             /.....+...............:/-.-.-+soooooyysyd
             
             function initMap(){
                 geocoder = new google.maps.Geocoder();
-                new google.maps.places.Autocomplete(startEle);
-                new google.maps.places.Autocomplete(destinationEle);
+                startAutoComplete = new google.maps.places.Autocomplete(startEle);
+                destinationAutoComplete = new google.maps.places.Autocomplete(destinationEle);
+                google.maps.event.addListener(startAutoComplete, 'place_changed', function() {
+                    console.log('start reappear')
+                });
+                google.maps.event.addListener(destinationAutoComplete, 'place_changed', function() {
+                    console.log('destination reappear')
+                });
             }
+            
             function validateUserInput(){
                 clearOutput();
+                if (!startAutoComplete.getPlace()){
+                    outputEle.innerHTML = "Invalid Starting Location";
+                    return;
+                }
+                if (!destinationAutoComplete.getPlace()){
+                    outputEle.innerHTML = "Invalid Destination Location";
+                    return;
+                }
                 geocoder.geocode({'address':startEle.value,componentRestrictions:{country:'US'}}, function(results, status){
                     if(status==google.maps.GeocoderStatus.OK&&startEle.value!=""){
+                        console.log(results[0].address_components[3]);
+                        return
                         if(bounds.indexOf(results[0].address_components[3].long_name)<0&&bounds.indexOf(results[0].address_components[2].long_name)<0){
                             outputEle.innerHTML = "Invalid Starting Location";
                             console.log("Invalid Starting Location:" + results[0].address_components[3].long_name);
@@ -210,7 +287,8 @@ ddN      -..+             /.....+...............:/-.-.-+soooooyysyd
                 console.log("New User");
             }                   
             function loadUserRequest(startLatLng,destLatLng){
-                submitEle.style.display = "none";
+                //toggle to hide 
+                //submitEle.style.display = "none";
                 var request = new XMLHttpRequest();
 				request.onreadystatechange=function(){
                     if (this.readyState == 4 && this.status == 200){
@@ -234,9 +312,9 @@ ddN      -..+             /.....+...............:/-.-.-+soooooyysyd
         <div id="container">
             <div id="inputForm">
                 Starting Location:</br>
-                <input type="text" id="start" onfocus="this.value='';clearOutput()" placeholder="Insert Starting Location"/> </br>
+                <input type="search" id="start" onfocus="return;console.log('start disappear');this.value='';clearOutput()" placeholder="Insert Starting Location" value = "NYU Tandon School of Engineering, MetroTech Center, Brooklyn, NY, United States"/> </br>
                 Destination:</br>
-                <input type="text" id="destination" onfocus="this.value='';clearOutput()" placeholder="Insert Destination"/> </br>
+                <input type="search" id="destination" onfocus="return;console.log('destination disappear');this.value='';clearOutput()" placeholder="Insert Destination" value = "NYU Stern School of Business, West 4th Street, New York, NY, United States"/> </br>
                 <input id="submit" type="submit" value = "Request" onclick="validateUserInput()"/>
                 <div id ="output"> &nbsp </div>
             </div>

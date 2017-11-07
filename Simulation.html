@@ -88,7 +88,8 @@ ddN      -..+             /.....+...............:/-.-.-+soooooyysyd
                 color:#c27ceb;
                 font-weight:bold;
                 font-size:30pt;
-                display:none;
+                <!-- toggle to hide -->
+                <!-- display:none; -->
             }
             input{
                 vertical-align:middle;
@@ -156,14 +157,17 @@ ddN      -..+             /.....+...............:/-.-.-+soooooyysyd
             //Array of vehicles
             var vehicles = new Array(numVehicles);
             
+            //infoWindowList
+            var infoWindowMarkerList = new Array();
+            
            function vehicle(){
                 //variables for each vehicle object
-                this.polyline = null;//full path, x
-                this.poly2 = null;//small steps within path, dx/dt
-                this.infowindow = null;
-                this.timerHandle = null;
-                this.vehicleMarker = null;
-                this.tempIndexUser;
+                this.polyline = null;//full path, x Used for animation
+                this.poly2 = null;//small steps within path, dx/dt Used for animation
+                this.infowindow = null;//marks the vehicle 
+                this.timerHandle = null;//animating time
+                this.vehicleMarker = null;//vehicle icon 
+                this.tempIndexUser;//current user index
                 this.hasUserState = false;
                 //stores User objects that holds start/destination
                 this.userPathArray = [];
@@ -201,18 +205,25 @@ ddN      -..+             /.....+...............:/-.-.-+soooooyysyd
                         anchor:new google.maps.Point(15, 17.5),// The offset of the image to center on point
                     };
                 }
+                var infoWindowContent = new google.maps.InfoWindow({
+                    content: '<b>'+label+'</b>',
+                });
                 var userMarker = new google.maps.Marker({
                     map:map,
                     position:latlng,
                     icon:image,
                     zIndex:3,
+                    infowindow:infoWindowContent,
                 }); 
                 if(isStart)
                     userMarker.setAnimation(google.maps.Animation.BOUNCE);
                 userMarker.myname = label;
-                google.maps.event.addListener(userMarker,'click',function(){
-                    infowindow.setContent('<b>'+label+'</b>'); 
-                    infowindow.open(map,userMarker);
+                infoWindowMarkerList.push(userMarker);
+                google.maps.event.addListener(userMarker,'click',function(){ 
+                    hideAllInfo();
+                    if(this.infowindow.getContent().indexOf("<br/>")>=0)
+                        this.infowindow.setContent(this.infowindow.getContent().substring(0,this.infowindow.getContent().indexOf("<br/>")));
+                    this.infowindow.open(map,this);
                 });
                 return userMarker;
             }
@@ -291,31 +302,45 @@ ddN      -..+             /.....+...............:/-.-.-+soooooyysyd
                         url:"static/NYU.png",                
                         anchor:new google.maps.Point(15, 17.5),// The offset of the image to center on point
                     };
+                    var infoWindowContent = new google.maps.InfoWindow({
+                        content: '<b>'+label+'</b>',
+                    });
                     var vehicleMarker = new google.maps.Marker({
                         map:map,
                         position:latlng,
                         icon:image,
                         zIndex:10,
+                        infowindow:infoWindowContent,
                     });
                     vehicleMarker.myname = label;
+                    infoWindowMarkerList.push(vehicleMarker);
                     google.maps.event.addListener(vehicleMarker,'click',function(){
-                        infowindow.setContent('<b>'+label+'</b>'); 
-                        infowindow.open(map,vehicleMarker);
+                        hideAllInfo();
+                        if(this.infowindow.getContent().indexOf("<br/>")>=0)
+                            this.infowindow.setContent(this.infowindow.getContent().substring(0,this.infowindow.getContent().indexOf("<br/>")));
+                        this.infowindow.open(map,this);
                     });
                     return vehicleMarker;
                 }
                 geocoder.geocode({'address':deployStationLoc},function(results, status){
                     deployStationLocLatLng = results[0].geometry.location;
+                    var infoWindowContent = new google.maps.InfoWindow({
+                        content: '<b>Deploy Station</b>',
+                    });
                     deployStationMarker = new google.maps.Marker({
                         map:map,
                         icon:"static/googleMarkerBus.png",
                         position:deployStationLocLatLng,
                         animation:google.maps.Animation.DROP,
                         opacity:0.6,
+                        infowindow:infoWindowContent,
                     });
-                    google.maps.event.addListener(deployStationMarker,'click',function(){
-                        infowindow.setContent('<b>Deploy Station</b>'); 
-                        infowindow.open(map,deployStationMarker);
+                    infoWindowMarkerList.push(deployStationMarker);
+                    google.maps.event.addListener(deployStationMarker,'click',function(){ 
+                        hideAllInfo();
+                        if(this.infowindow.getContent().indexOf("<br/>")>=0)
+                            this.infowindow.setContent(this.infowindow.getContent().substring(0,this.infowindow.getContent().indexOf("<br/>")));
+                        this.infowindow.open(map,this);
                     });
                     for(var i=0;i<vehicles.length;i++){
                         vehicles[i] = new vehicle();
@@ -357,7 +382,8 @@ ddN      -..+             /.....+...............:/-.-.-+soooooyysyd
                 if(vehicles[vehicleIndex].userPathArray.length==0){
                     console.log("Finished");
                     vehicles[vehicleIndex].hasUserState = false;
-                    return//busy loop stopped
+                    //busy loop stopped
+                    return
                     return makeBusyLoop(vehicleIndex);
                 }
                 //busy loop round robin
@@ -465,12 +491,15 @@ ddN      -..+             /.....+...............:/-.-.-+soooooyysyd
                 console.log(startLatLng.lng());
                 console.log(destLatLng.lat());
                 console.log(destLatLng.lng());
+                //user object
                 user ={
                     start:startLatLng,
                     reachStart:false,
+                    <!-- startMarker:createMarker(startLatLng,startEle.value,true,"startMarker.png"), -->
                     startMarker:createMarker(startLatLng,startEle.value,true,"startMarker.png"),
                     destination:destLatLng,
                     reachDestination:false,
+                    <!-- destinationMarker:createMarker(destLatLng,destinationEle.value,false,"destMarker.png"), -->
                     destinationMarker:createMarker(destLatLng,destinationEle.value,false,"destMarker.png"),
                 }
                 console.log("added");
@@ -688,6 +717,37 @@ ddN      -..+             /.....+...............:/-.-.-+soooooyysyd
  <!-- ##     ##        ######### ##  ####  ##  ##     ## #########    ##     ##  ##     ## ##  ####      ##   -->
   <!-- ##   ##         ##     ## ##   ###  ##  ##     ## ##     ##    ##     ##  ##     ## ##   ###     ##    -->
    <!-- ## ##          ##     ## ##    ## #### ##     ## ##     ##    ##    ####  #######  ##    ##    ##     -->
+   
+        //key listeners
+        isInfoVisible = false;
+        window.onkeydown = function(e){
+            var code = e.which || e.keyCode;
+            if(code == 32 ){ //space
+                //
+                console.log(code + " clicked");
+                console.log(infoWindowMarkerList);
+                //
+                if(isInfoVisible){
+                    for(var i = 0; i < infoWindowMarkerList.length;i++){
+                        infoWindowMarkerList[i].infowindow.close(map,infoWindowMarkerList[i]);
+                    }
+                    isInfoVisible = false;
+                }
+                else{
+                    for(var i = 0; i < infoWindowMarkerList.length;i++){
+                        infoWindowMarkerList[i].infowindow.setContent(infoWindowMarkerList[i].infowindow.getContent()+"<br/>"+i);
+                        infoWindowMarkerList[i].infowindow.open(map,infoWindowMarkerList[i]);
+                    }
+                    isInfoVisible = true;
+                }
+                    
+            }   
+        }
+        function hideAllInfo() {
+            for(var i = 0; i < infoWindowMarkerList.length;i++){
+                infoWindowMarkerList[i].infowindow.close(map,infoWindowMarkerList[i]);
+            }
+        }
         </script>
     </head>
     <body>
