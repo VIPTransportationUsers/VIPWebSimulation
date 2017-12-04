@@ -1,0 +1,52 @@
+#mapEle{
+    height:100%;   
+}
+html, body{
+    height:100%;
+    margin:0; 
+    padding:0;
+}
+#header{
+    position:absolute;
+    top:5px;
+    left:5px;
+    z-index:2;
+    background-color:#fff;
+    padding:5px;
+    font-family:'Adelle W01 Bold', serif;
+    border-radius:5px;
+    color:#c27ceb;
+    font-weight:bold;
+    font-size:30pt;
+    <!-- toggle to hide -->
+    <!-- display:none; -->
+}
+input{
+    vertical-align:middle;
+    font-size:20pt;
+}
+#submit{
+    background-color:#c27ceb;
+    border-radius:10px;
+    color:#ffffff;
+    padding:5px;
+    outline:none;
+    opacity:.9;
+}
+#githubContainer{
+    opacity:.8;
+    position:fixed;
+    bottom:10px;
+    right:50px;
+}
+#github{
+    height:auto;
+    width:75px;
+}
+#vipLogo{
+    position:fixed;
+    top:5px;
+    right:5px;
+    height:auto;
+    width:250px;
+}
